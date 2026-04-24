@@ -3,15 +3,6 @@ import { nanoid } from "nanoid";
 import Die from "./Die";
 
 export default function App() {
-  /**
-   * Challenge: Create a `Roll Dice` button that will re-roll
-   * all 10 dice
-   *
-   * Clicking the button should generate a new array of numbers
-   * and set the `dice` state to that new array (thus re-rendering
-   * the array to the page)
-   */
-
   const [dice, setDice] = useState(generateAllNewDice());
 
   function generateAllNewDice() {
@@ -21,16 +12,33 @@ export default function App() {
       id: nanoid(),
     }));
   }
+  const hold = (id) => {
+    setDice((prev) =>
+      prev.map((die) => {
+        return die.id === id ? { ...die, isHeld: !die.isHeld } : die;
+      }),
+    );
+  };
   const rollDice = () => {
     setDice(generateAllNewDice());
   };
 
   const diceElements = dice.map((dieObj) => (
-    <Die key={dieObj.id} value={dieObj.value} />
+    <Die
+      key={dieObj.id}
+      isHeld={dieObj.isHeld}
+      value={dieObj.value}
+      hold={() => hold(dieObj.id)}
+    />
   ));
 
   return (
     <main>
+      <h2>Tenzies</h2>
+      <p>
+        Roll until all dice are the same. Click each die to freeze it at its
+        current value between rolls.
+      </p>
       <div className="dice-container">{diceElements}</div>
 
       <button className="roll-dice" onClick={rollDice}>
